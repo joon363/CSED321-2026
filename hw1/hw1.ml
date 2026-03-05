@@ -112,10 +112,23 @@ let rec insort l =
     (*Max between head and else*)
     | h::t -> insert h (insort t)
 
-let rec compose _ _ = raise Not_implemented
-let rec curry _ _ _ = raise Not_implemented
-let rec uncurry _ _ = raise Not_implemented
-let rec multifun _ _ = raise Not_implemented
+(*It does not have to be a recursive function*)
+let compose f g = 
+    let func x = g(f(x)) in func
+
+(*It does not have to be a recursive function*)
+let curry f = 
+    let func x y = f (x,y) in func
+
+(*It does not have to be a recursive function*)
+let uncurry f = 
+    let func (x,y) = f x y in func
+let rec multifun f n = 
+    if n<0 then raise Invariant
+    (*Stop Condition*)
+    else if n=1 then f
+    (*Use compose above and recurse.*)
+    else compose f (multifun f (n-1))
 
 let rec ltake _ _ = raise Not_implemented
 let rec lexists _ _ = raise Not_implemented
