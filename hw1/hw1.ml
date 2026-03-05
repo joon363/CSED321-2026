@@ -74,10 +74,43 @@ let rec inorder t =
     | _ -> raise Invariant
 
 
-let rec max _ = raise Not_implemented
-let rec list_add _ _ = raise Not_implemented
-let rec insert _ _ = raise Not_implemented
-let rec insort _ = raise Not_implemented
+let rec max l = 
+    match l with
+    (*Empty List*)
+    | [] -> 0
+    (*Stop Condition*)
+    | [x] -> x
+    (*Max between head and else*)
+    | h::t -> 
+        let submax = max t in
+        if h>submax then h else submax
+
+let rec list_add l1 l2 = 
+    (*Pattern match both list at once*)
+    match (l1, l2) with
+    | (h1::t1, h2::t2) -> (h1+h2)::(list_add t1 t2)
+    | (h::t, [x]) | ([x], h::t) -> (h+x)::t
+    | (l, []) | ([], l) -> l
+
+let rec insert m l = 
+    match l with
+    (*Empty List*)
+    | [] -> [m]
+    (*Stop Condition*)
+    | [x] -> if m<x then [m;x] else [x;m]
+    (*Max between head and else*)
+    | h::t -> if m<h then m::(h::t) else h::(insert m t)
+
+let rec insort l = 
+    (*for h::t, insert h::t will move h into proper place in t.
+    that is, we can implement sort by insert h (insort t) *)
+    match l with
+    (*Empty List*)
+    | [] -> []
+    (*Single List*)
+    | [x] -> [x]
+    (*Max between head and else*)
+    | h::t -> insert h (insort t)
 
 let rec compose _ _ = raise Not_implemented
 let rec curry _ _ _ = raise Not_implemented
