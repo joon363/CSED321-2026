@@ -33,10 +33,46 @@ let rec combi n k =
     else combi (n-1) (k-1) + combi (n-1) k 
 
 
-let rec sum_tree _ = raise Not_implemented
-let rec depth _ = raise Not_implemented
-let rec bin_search _ _ = raise Not_implemented
-let rec inorder _ = raise Not_implemented
+let rec sum_tree t = 
+    match t with
+    (*Stop Condition: leaf *)
+    | Leaf v -> v
+    | Node (l,v,r) -> (sum_tree l) + v + (sum_tree r)
+    | _ -> raise Invariant
+
+let rec depth t = 
+    (*Add accumulator*)
+    let rec acc t d = 
+    match t with
+    (*Stop Condition: leaf *)
+    | Leaf _ -> d
+    (*Node: depth+=1, compare left and right*)
+    | Node (l,_,r) ->
+        let ldepth = acc l (d+1) in
+        let rdepth = acc r (d+1) in
+        if ldepth>rdepth then ldepth else rdepth
+    | _ -> raise Invariant
+    (*Start from root*)
+    in acc t 0
+
+let rec bin_search t x = 
+    match t with
+    (*return if value is x*)
+    | Leaf v -> x=v
+    (*find from node*)
+    | Node (l,v,r) ->
+        if x=v then true (*found!*)
+        else if x<v then bin_search l x
+        else bin_search r x
+    | _ -> raise Invariant
+    
+let rec inorder t = 
+    match t with
+    | Leaf v -> [v]
+    (*Concat by l-v-r*)
+    | Node (l,v,r) -> (inorder l) @ [v] @ (inorder r)
+    | _ -> raise Invariant
+
 
 let rec max _ = raise Not_implemented
 let rec list_add _ _ = raise Not_implemented
