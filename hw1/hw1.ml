@@ -38,7 +38,6 @@ let rec sum_tree t =
     (*Stop Condition: leaf *)
     | Leaf v -> v
     | Node (l,v,r) -> (sum_tree l) + v + (sum_tree r)
-    | _ -> raise Invariant
 
 let rec depth t = 
     (*Add accumulator*)
@@ -51,7 +50,6 @@ let rec depth t =
         let ldepth = acc l (d+1) in
         let rdepth = acc r (d+1) in
         if ldepth>rdepth then ldepth else rdepth
-    | _ -> raise Invariant
     (*Start from root*)
     in acc t 0
 
@@ -64,14 +62,12 @@ let rec bin_search t x =
         if x=v then true (*found!*)
         else if x<v then bin_search l x
         else bin_search r x
-    | _ -> raise Invariant
     
 let rec inorder t = 
     match t with
     | Leaf v -> [v]
     (*Concat by l-v-r*)
     | Node (l,v,r) -> (inorder l) @ [v] @ (inorder r)
-    | _ -> raise Invariant
 
 
 let rec max l = 
@@ -89,7 +85,6 @@ let rec list_add l1 l2 =
     (*Pattern match both list at once*)
     match (l1, l2) with
     | (h1::t1, h2::t2) -> (h1+h2)::(list_add t1 t2)
-    | (h::t, [x]) | ([x], h::t) -> (h+x)::t
     | (l, []) | ([], l) -> l
 
 let rec insert m l = 
