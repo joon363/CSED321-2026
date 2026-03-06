@@ -125,12 +125,96 @@ let rec multifun f n =
     (*Use compose above and recurse.*)
     else compose f (multifun f (n-1))
 
-let rec ltake _ _ = raise Not_implemented
-let rec lexists _ _ = raise Not_implemented
-let rec lmap _ _ = raise Not_implemented
-let rec lrev _ = raise Not_implemented
-let rec lflat _ = raise Not_implemented
-let rec lzip _ _ = raise Not_implemented
-let rec split _ = raise Not_implemented
-let rec cartprod _ _ = raise Not_implemented
-let rec powerset _ = raise Not_implemented
+let rec ltake l n = 
+    if n<0 then raise Invariant
+    else let rec inner input buffer n = 
+        match (input,n) with
+        (*Stop Condition*)
+        | _, 0 -> buffer
+        | [], _ -> buffer
+        | [x], _ -> buffer @ [x]
+        (*Recursion: add head to the tail of the buffer list.*)
+        | h::t, v -> inner t (buffer @ [h]) (v-1)
+    in inner l [] n
+
+let rec lexists f l = 
+    match l with
+    (*Stop Condition*)
+    | [] -> false
+    | [x] -> f x
+    (*Recursion: logical or*)
+    | h::t -> (f h) || lexists f t
+
+let rec lmap f l = 
+    match l with
+    (*Stop Condition*)
+    | [] -> []
+    | [x] -> [(f x)]
+    (*Recursion: apply head and iterate.*)
+    | h::t -> (f h) :: (lmap f t)
+    
+let rec lrev l = 
+    match l with
+    (*Recursion: apply head and iterate.*)
+    | h::t -> (lrev t) @ [h]
+    (*Stop Condition (empty list)*)
+    | _ -> []
+
+let rec lflat l = 
+    match l with
+    (*Recursion: head is a' list*)
+    | h::t -> h @ (lflat t)
+    (*Stop Condition (empty list)*)
+    | _ -> []
+
+let rec lzip l1 l2 = 
+    match (l1,l2) with
+    (*Recursion: zip one-by-one*)
+    | (h1::t1, h2::t2) -> (h1,h2) :: lzip t1 t2
+    (*Stop Condition: empty or different length list; ignore surplus elements*)
+    | (l, []) -> []
+    | ([], l) -> []
+
+let rec split l = 
+    (*Recursion: make two buffers o(odd) and e(even)
+    and use bool isOdd to indicate the position.
+    output of inner o e : a' list, a' list *)
+    let rec inner input o e isOdd= 
+        match input with
+        | h::t -> 
+            if isOdd=true then inner t (o @ [h]) e false
+            else inner t o (e @ [h]) true
+        | [] -> (o,e)
+    in inner l [] [] true
+            
+
+let rec cartprod s t = 
+    (*Helper function: cartprod in one list*)
+    (* inner x [y1 y2 y3] = [(x,y1), (x,y2), (x,y3)]*)
+    let rec inner v l = 
+        match l with
+        | h::t -> (v,h)::(inner v t)
+        | _ -> []
+    (*Iterate elements of s with inner*)
+    in match s with
+    | h::tail -> (inner h t) @ (cartprod tail t) 
+    | _ -> []
+
+let rec powerset s = 
+    (*Idea: for power [a,b,c], power set would be a::[power b,c] @ [power b,c]
+    helper function fun v1, l -> v1::l
+    ex) [a,b] -> 
+    1. lmap (fun l->a::l) (power [b]) = lmap (fun l->a::l) ([[],[b]])
+    = [[a], [a,b]]
+    2. power [b] = [[],[b]]
+    therefore [[],[b],[a],[a,b]]
+    Also, to reduce computation, do memoization by let res = power b,c
+    *)
+    match s with
+    | [] -> [[]]
+    | [x] -> [[];[x]]
+    | h::t -> 
+        let res1 = powerset t in
+        let res2 = lmap (fun l -> h::l) res1 in
+        res1 @ res2
+
