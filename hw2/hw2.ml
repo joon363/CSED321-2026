@@ -4,8 +4,30 @@ type 'a tree = Leaf of 'a | Node of 'a tree * 'a * 'a tree
 
 (** Recursive functions **)
 
-let rec lrevrev _ = raise NotImplemented
-let rec lfoldr _ _ _ = raise NotImplemented
+let rec lrevrev l = 
+  (*Using functions from HW1*)
+  let rec lmap f l = 
+    match l with
+    (*Stop Condition*)
+    | [] -> []
+    | [x] -> [(f x)]
+    (*Recursion: apply head and iterate.*)
+    | h::t -> (f h) :: (lmap f t) in
+  let rec lrev l = 
+    match l with
+    (*Recursion: apply head and iterate.*)
+    | h::t -> (lrev t) @ [h]
+    (*Stop Condition (empty list)*)
+    | _ -> []
+  (*Reverse the elements, and reverse it again.*)
+  in lrev (lmap lrev l)
+
+let rec lfoldr f e l = 
+  (*for list a b c, returns f(a,(f(b,(f(c,e))))) 
+  Note that type of f is (a*b->b) *)
+  match l with
+  | [] -> e
+  | h::t -> f (h, (lfoldr f e t))
 
 (** Tail-recursive functions  **)
 
