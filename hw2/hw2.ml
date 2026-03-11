@@ -228,13 +228,37 @@ module Heap : HEAP =
   struct
     exception InvalidLocation
 
-    type loc = unit       (* dummy type, to be chosen by students *)
-    type 'a heap = unit   (* dummy type, to be chosen by students *)
+    (* Lets assume 2^32 Byte (4GB) address(location) space *)
+    type loc = int 
+    (* Heap Memory has: location and value
+    note that we assume 'a is 1 byte; such as char.
+    else, we need to implement REAL dynamic allocation. but that is out of the scope of this assignment. *)
+    (* Also, It seems that using map or bucket will be more efficient.. but efficiency is also not in our consideration. *)
+    type 'a heap = (loc * 'a) list
 
-    let empty _ = raise NotImplemented
-    let allocate _ _ = raise NotImplemented
-    let dereference _ _ = raise NotImplemented
-    let update _ _ _ = raise NotImplemented
+    let empty _ = []
+    let allocate h v = 
+      (* Append to the end of the list *)
+      let new_loc = List.length h in
+      ((new_loc, v)::h, new_loc)
+
+    let dereference h l = 
+      try
+        (* Use assoc function in association lists. see https://ocaml.org/manual/5.4/api/List.html 
+        Also, there is no garbage collection. *)
+        List.assoc l h
+      with 
+      | Not_found -> raise InvalidLocation
+      | e -> raise e
+
+    let update h l v = 
+      (* Remove using remove_assoc, and append at the top.
+      It would works since the list does not has to be in order of the location.
+      Since remove_assoc does not raises exception when there is no element l, I used mem_assoc to determine whether l is valid or not.
+      *)
+      let doesExists = List.mem_assoc l h in
+      if doesExists then (l, v) ::(List.remove_assoc l h)
+      else raise InvalidLocation
   end
 
 module DictList : DICT with type key = string =
