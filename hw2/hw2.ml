@@ -5,25 +5,25 @@ type 'a tree = Leaf of 'a | Node of 'a tree * 'a * 'a tree
 (** Recursive functions **)
 
 let rec lrevrev l = 
-  (*Using functions from HW1*)
+  (* Using functions from HW1 *)
   let rec lmap f l = 
     match l with
-    (*Stop Condition*)
+    (* Stop Condition *)
     | [] -> []
     | [x] -> [(f x)]
-    (*Recursion: apply head and iterate.*)
+    (* Recursion: apply head and iterate. *)
     | h::t -> (f h) :: (lmap f t) in
   let rec lrev l = 
     match l with
-    (*Recursion: apply head and iterate.*)
+    (* Recursion: apply head and iterate. *)
     | h::t -> (lrev t) @ [h]
     (*Stop Condition (empty list)*)
     | _ -> []
-  (*Reverse the elements, and reverse it again.*)
+  (* Reverse the elements, and reverse it again. *)
   in lrev (lmap lrev l)
 
 let rec lfoldr f e l = 
-  (*for list a b c, returns f(a,(f(b,(f(c,e))))) 
+  (* for list a b c, returns f(a,(f(b,(f(c,e))))) 
   Note that type of f is (a*b->b) *)
   match l with
   | [] -> e
@@ -31,15 +31,134 @@ let rec lfoldr f e l =
 
 (** Tail-recursive functions  **)
 
-let fact _ = raise NotImplemented
-let fib _ = raise NotImplemented
-let asum _ = raise NotImplemented
-let ltabulate _ _ = raise NotImplemented
-let lfilter _ _ = raise NotImplemented
-let union _ _ = raise NotImplemented
-let inorder _ = raise NotImplemented
-let postorder _ = raise NotImplemented
-let preorder _ = raise NotImplemented
+let fact n = 
+  (* f 3 1 => f 2 (3*1) => f 1 (2*3*1) => f 0 (1*2*3*1) => (1*2*3*1) *)
+  let rec fact_aux n acc = 
+    if n=0 then acc
+    else fact_aux (n-1) (n*acc)
+  in fact_aux n 1
+
+let fib n = 
+  (* Challange is that the fact that fib n = fib (n-1) + fib(n-2)
+  is NOT tail-recursive.
+  To implement it in tail-recursive
+  f(a,b,n) = f(b,(a+b),n-1) until n reaches 0 
+  
+  ex. fib 4 (1 1 2 3 5)
+  f(0,1,4) = f(1,1,3) = f(1,2,2) = f(2,3,1) = f(3,5,0) = 5 *)
+  let rec fib_aux a b count = 
+    if count=0 then b
+    else fib_aux b (a+b) (count-1)
+  in fib_aux 0 1 n
+
+let asum l = 
+  (* We need binary flag for operation and sum for tail rec.
+  flag=0: +, flag=1: -
+  f [3 2 7 3 ] 0 0 
+  = f [2 7 3] 1 0+3 
+  = f [7 3] 0 0+3-2
+  = f [3] 1 0+3-2+7
+  = f [] 0 0+3-2+7-3
+  *)
+  let rec aux l flag res = 
+    (* Helper functions *)
+    let plusminus_f flag x = 
+      if flag=0 then x
+      else (-1)*x
+    in let newflag_f flag = 
+      if flag=0 then 1
+      else 0
+    in match l with
+    (* Stop Condition *)
+    | [] -> res
+    | h::t -> 
+      let newflag = newflag_f flag in
+      let plusminus = plusminus_f flag h in
+      aux t newflag res+plusminus
+  (* Start recursion with flag=0, sum=0 *)
+  in aux l 0 0
+
+let ltabulate n f = 
+  (* Note that this might similar to the lmap in hw1
+  but it should make a list and also tail-rec. 
+  aux 3 [] = aux 2 4::[] = aux 1 1::4::[] = aux 0 0::1::4::[] = [0,1,4]
+  *)
+  let rec aux n acc =
+    if n=0 then acc
+    else aux (n-1) ((f (n-1))::acc)
+  in aux n []
+
+let lfilter p l = 
+  (* Let's make a acc list and append the header at the tail only when p h = true 
+  Note) since '@' operator is heavy, we might start with reversed list.
+  however, efficiency is not the key in this assignment. so, I'll just use '@' operator.
+  *)
+  let rec aux l acc = 
+    match l with
+    | [] -> acc
+    | h::t -> 
+      let add_elem = if p h then [h] else []
+      in aux t (acc@add_elem)
+  in aux l []
+
+let union s t = 
+  (* Naive idea: just check the whole list every time
+  or, make s@t and check from first element, and delete any
+  i.e. 
+  1 2 3 2 4 6 []
+  -> 2 3 2 4 6 [1]
+  -> 3 4 6 [1 2]
+  -> 4 6 [1 2 3]
+  -> 6 [1 2 3 4]
+  ->[1 2 3 4 6]
+  *)
+  let rec acc l res = 
+    (* We can use filter here. for 2::[3,2,4,6], lfilter (fun x->x!=2) [3,2,4,6] = [3,4,6] *)
+    match l with
+    | [] -> res
+    | h::t -> acc (lfilter (fun x -> x!=h) t) (h::res)
+  in acc (s@t) []
+
+let inorder t =
+   (* Note: just rec version: (inorder l) @ [v] @ (inorder r)
+   However, it is not tail-rec. 
+   Idea: I have totally no idea how to implement as the pdf says..
+   So I will use "tree list" instead of "tree" *)
+  let rec aux subtrees post = 
+    match subtrees with 
+    (* Stop Condition *)
+    | [] -> post
+    | h::t -> 
+      match h with
+      | Leaf v -> aux t (post @ [v])
+      (* Inorder Traverse *)
+      | Node (l,v,r) -> aux ([l;(Leaf v);r]@t) (post)
+    in aux [t] []
+
+
+let postorder t = 
+  let rec aux subtrees post = 
+    match subtrees with 
+    (* Stop Condition *)
+    | [] -> post
+    | h::t -> 
+      match h with
+      | Leaf v -> aux t (post @ [v])
+      (* Postorder Traverse *)
+      | Node (l,v,r) -> aux ([l;r;(Leaf v)]@t) (post)
+    in aux [t] []
+
+let preorder t = 
+  let rec aux subtrees post = 
+    match subtrees with 
+    (* Stop Condition *)
+    | [] -> post
+    | h::t -> 
+      match h with
+      | Leaf v -> aux t (post @ [v])
+      (* Preorder Traverse *)
+      | Node (l,v,r) -> aux ([(Leaf v);l;r]@t) (post)
+    in aux [t] []
 
 (** Sorting functions **)
 
