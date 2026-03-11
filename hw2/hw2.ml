@@ -185,7 +185,7 @@ let rec mergesort l =
       if h1<h2 then h1::(merge t1 (h2::t2))
       else h2::(merge (h1::t1) t2)
     | _,_ -> raise Invariant (* Two lists for merge has more than 2 difference in length. something is wrong. *)
-    
+
   (* divide helper func. since we don't know the length of the list, divide by even and odd position. *)
   in let rec divide li left right flag =
     match li with
@@ -269,10 +269,22 @@ module DictList : DICT with type key = string =
     type key = string
     type 'a dict = (key * 'a) list
 
-    let empty _ = raise NotImplemented
-    let lookup _ _ = raise NotImplemented
-    let delete _ _ = raise NotImplemented
-    let insert _ _ = raise NotImplemented
+    let empty _ = []
+
+    (* Here we do not have to raise InvalidLocation. So, use assoc_opt rather than assoc. *)
+    let lookup d k = 
+      List.assoc_opt k d
+
+    (* Same as above; no exception raised. *)
+    let delete d k = 
+      List.remove_assoc k d
+    
+    (* If exists, do "update" logic. else just append it *)
+    let insert d (k,v) = 
+      let doesExists = List.mem_assoc k d in
+      if doesExists then 
+        (k, v) ::(List.remove_assoc k d)
+      else (k, v)::d
   end
 
 module DictFun : DICT with type key = string =
