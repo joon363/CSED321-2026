@@ -1,4 +1,5 @@
 exception NotImplemented
+exception Invariant
 
 type 'a tree = Leaf of 'a | Node of 'a tree * 'a * 'a tree
 
@@ -183,6 +184,8 @@ let rec mergesort l =
     | h1::t1, h2::t2 ->
       if h1<h2 then h1::(merge t1 (h2::t2))
       else h2::(merge (h1::t1) t2)
+    | _,_ -> raise Invariant (* Two lists for merge has more than 2 difference in length. something is wrong. *)
+    
   (* divide helper func. since we don't know the length of the list, divide by even and odd position. *)
   in let rec divide li left right flag =
     match li with
