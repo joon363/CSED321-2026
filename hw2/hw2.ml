@@ -122,8 +122,8 @@ let union s t =
 let inorder t =
    (* Note: just rec version: (inorder l) @ [v] @ (inorder r)
    However, it is not tail-rec. 
-   Idea: I have totally no idea how to implement as the pdf says..
-   So I will use "tree list" instead of "tree" *)
+   Idea: I have absolutly no idea how to implement as the pdf says.. (tree, list)
+   So I will use "tree list" and "list" instead of "tree" "list"*)
   let rec aux subtrees post = 
     match subtrees with 
     (* Stop Condition *)
@@ -162,8 +162,44 @@ let preorder t =
 
 (** Sorting functions **)
 
-let rec quicksort _ = raise NotImplemented
-let rec mergesort _ = raise NotImplemented
+let rec quicksort l = 
+  match l with
+  | [] -> []
+  | h::t ->
+    (* pivot: h *)
+    (* use lfilter to make two lists *)
+    let left = lfilter (fun x -> x<=h) t in
+    let right = lfilter (fun x -> x>h) t in
+    (quicksort left) @ [h] @ (quicksort right)
+     
+
+let rec mergesort l = 
+  (* merge helper func. compare first elements and select smaller one and go on. *)
+  let rec merge l1 l2 = 
+    match (l1,l2) with
+    | [], [] -> []
+    | [x], [] -> [x]
+    | [], [x] -> [x]
+    | h1::t1, h2::t2 ->
+      if h1<h2 then h1::(merge t1 (h2::t2))
+      else h2::(merge (h1::t1) t2)
+  (* divide helper func. since we don't know the length of the list, divide by even and odd position. *)
+  in let rec divide li left right flag =
+    match li with
+    | [] -> (left, right) 
+    | h::t ->
+      if flag=0 then divide t (h::left) right 1
+      else divide t left (h::right) 0
+  in
+  (* mergesort entry *)
+  match l with
+  | []-> []
+  | [x] -> [x]
+  | h::t -> 
+    (* Divide*)
+    let (left, right) = divide l [] [] 0 in
+    (* Recurse and Conquer *)
+    merge (mergesort left) (mergesort right)
 
 (** Structures **)
 
