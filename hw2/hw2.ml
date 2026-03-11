@@ -292,8 +292,16 @@ module DictFun : DICT with type key = string =
     type key = string
     type 'a dict = key -> 'a option
 
-    let empty _ = raise NotImplemented
-    let lookup _ _ = raise NotImplemented
-    let delete _ _ = raise NotImplemented
-    let insert _ _ = raise NotImplemented
+    (* Note that option could be 'None' or 'Some a' *)
+    let empty _ = fun k -> None
+    (* Since dict is function, just call it! *)
+    let lookup d k = d k
+
+    (* from now on, k returns None.
+    even if insert than delete -> no problem!
+    *)
+    let delete d k = fun x->(if x=k then None else d x)
+
+    (* Similarly, k returns Some v *)
+    let insert d (k,v) = fun x->(if x=k then Some v else d x)
   end
