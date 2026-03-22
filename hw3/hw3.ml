@@ -40,7 +40,7 @@ end
 (* Problem 2-2 *)
 (* Vector *)
 
-(* module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
+module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
 =
 struct
   type elem = Scal.t
@@ -78,7 +78,7 @@ struct
   let (++) _ _ = raise NotImplemented
   let ( ** ) _ _ = raise NotImplemented
   let (==) _ _ = raise NotImplemented
-end *)
+end
 
 (* Problem 3-1 *)
 (* Closure *)

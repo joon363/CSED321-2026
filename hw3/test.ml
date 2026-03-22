@@ -2,8 +2,8 @@ open Common
 open Hw3
 
 (* 테스트를 위한 정수형 벡터 및 행렬 모듈 인스턴스화 *)
-(* module IntVec = VectorFn(Integer)
-module IntMat = MatrixFn(Integer) *)
+module IntVec = VectorFn(Integer)
+module IntMat = MatrixFn(Integer)
 
 (* 문자열 변환 함수들 (에러 출력용) *)
 let string_of_int_list lst = "[" ^ String.concat "; " (List.map string_of_int lst) ^ "]"
@@ -43,10 +43,10 @@ let _ =
   add_bool_test "Boolean ** (AND)" (fun () -> Boolean.( ** ) true false) false;
   add_bool_test "Boolean ** (AND) edge" (fun () -> Boolean.( ** ) true true) true;
   add_bool_test "Boolean ==" (fun () -> Boolean.(==) true true) true;
-  add_bool_test "Boolean == false" (fun () -> Boolean.(==) true false) false
+  add_bool_test "Boolean == false" (fun () -> Boolean.(==) true false) false;
 
   (* 2. VectorFn Module Tests *)
-  (* add_int_list_test "Vector create & to_list" (fun () -> IntVec.(to_list (create [1; 2; 3]))) [1; 2; 3];
+  add_int_list_test "Vector create & to_list" (fun () -> IntVec.(to_list (create [1; 2; 3]))) [1; 2; 3];
   add_custom_test "Vector create empty" (fun () -> 
     try let _ = IntVec.create [] in false with IntVec.VectorIllegal -> true | _ -> false);
   add_int_test "Vector dim" (fun () -> IntVec.(dim (create [1; 2; 3; 4]))) 4;
@@ -89,7 +89,7 @@ let _ =
   add_custom_test "Matrix ** diff dim" (fun () -> 
     try let _ = IntMat.(create [[1]] ** create [[1; 2]; [3; 4]]) in false with IntMat.MatrixIllegal -> true | _ -> false);
   add_bool_test "Matrix ==" (fun () -> IntMat.(create [[1; 2]; [3; 4]] == create [[1; 2]; [3; 4]])) true;
-  add_bool_test "Matrix == false" (fun () -> IntMat.(create [[1; 2]; [3; 4]] == create [[4; 3]; [2; 1]])) false *)
+  add_bool_test "Matrix == false" (fun () -> IntMat.(create [[1; 2]; [3; 4]] == create [[4; 3]; [2; 1]])) false
 
   (* 4. ClosureFn Module Tests *)
   (* add_custom_test "Closure calculation 1" (fun () -> 

@@ -8,9 +8,9 @@ module Integer : SCALAR with type t = int
 
 module Boolean : SCALAR with type t = bool
 
-(* module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
+module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
 
-module MatrixFn (Scal : SCALAR) : MATRIX with type elem = Scal.t *)
+module MatrixFn (Scal : SCALAR) : MATRIX with type elem = Scal.t
 
 (* module ClosureFn (Mat : MATRIX) :
   sig
