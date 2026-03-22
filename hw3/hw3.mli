@@ -8,11 +8,11 @@ module Integer : SCALAR with type t = int
 
 module Boolean : SCALAR with type t = bool
 
-module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
+(* module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
 
-module MatrixFn (Scal : SCALAR) : MATRIX with type elem = Scal.t
+module MatrixFn (Scal : SCALAR) : MATRIX with type elem = Scal.t *)
 
-module ClosureFn (Mat : MATRIX) :
+(* module ClosureFn (Mat : MATRIX) :
   sig
     val closure : Mat.t -> Mat.t
   end
@@ -34,4 +34,4 @@ val solution_dl' : int list list
 
 val weight : int list list -> int list list
 val ml : int list list
-val solution_ml' : int list list
+val solution_ml' : int list list *)
