@@ -98,6 +98,7 @@ let _ =
 
   (* 13. mergesort *)
   add_int_list_test "mergesort normal" (fun () -> mergesort [3; 7; 5; 1; 2]) [1; 2; 3; 5; 7];
+  add_int_list_test "mergesort minus" (fun () -> mergesort [9; 8; -7; 6; -5;]) [-7; -5; 6; 8; 9];
   add_int_list_test "mergesort empty" (fun () -> mergesort []) [];
   add_int_list_test "mergesort single" (fun () -> mergesort [1]) [1];
   add_int_list_test "mergesort duplicates" (fun () -> mergesort [5; 5; 3; 5]) [3; 5; 5; 5];

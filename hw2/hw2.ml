@@ -1,6 +1,10 @@
 exception NotImplemented
 exception Invariant
+let string_of_int_list lst = "[" ^ String.concat "; " (List.map string_of_int lst) ^ "]"
+let string_of_bool b = if b then "true" else "false"
 
+let rec string_of_list string_of_elem lst = 
+  "[" ^ String.concat "; " (List.map string_of_elem lst) ^ "]"
 type 'a tree = Leaf of 'a | Node of 'a tree * 'a * 'a tree
 
 (** Recursive functions **)
@@ -177,14 +181,14 @@ let rec quicksort l =
 let rec mergesort l = 
   (* merge helper func. compare first elements and select smaller one and go on. *)
   let rec merge l1 l2 = 
+    (* Printf.printf "Merging: l1: %s l2: %s \n" (string_of_int_list l1) (string_of_int_list l2); *)
     match (l1,l2) with
     | [], [] -> []
-    | [x], [] -> [x]
-    | [], [x] -> [x]
+    | h::t, [] -> h::t
+    | [], h::t -> h::t
     | h1::t1, h2::t2 ->
       if h1<h2 then h1::(merge t1 (h2::t2))
       else h2::(merge (h1::t1) t2)
-    | _,_ -> raise Invariant (* Two lists for merge has more than 2 difference in length. something is wrong. *)
 
   (* divide helper func. since we don't know the length of the list, divide by even and odd position. *)
   in let rec divide li left right flag =
@@ -201,6 +205,7 @@ let rec mergesort l =
   | h::t -> 
     (* Divide*)
     let (left, right) = divide l [] [] 0 in
+    (* Printf.printf "Divided: Left %s Right %s \n" (string_of_int_list left) (string_of_int_list right); *)
     (* Recurse and Conquer *)
     merge (mergesort left) (mergesort right)
 
