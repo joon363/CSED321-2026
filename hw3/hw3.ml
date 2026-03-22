@@ -44,17 +44,74 @@ module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
 =
 struct
   type elem = Scal.t
-  type t = unit
+  type t = elem list (* Simple Implementation.*)
 
   exception VectorIllegal
 
-  let create _ = raise NotImplemented
-  let to_list _ = raise NotImplemented
-  let dim _ = raise NotImplemented
-  let nth _ = raise NotImplemented
-  let (++) _ _ = raise NotImplemented
-  let (==) _ _ = raise NotImplemented
-  let innerp _ _ = raise NotImplemented
+  (* vector creation.
+  - create takes a list of scalar elements, and returns a corresponding vector:
+    create [x0; ...; xi; ...; x(n-1)] = a vector /x0; ...; xi; ...; x(n-1)/.
+  - VectorIllegal is raised if the list is empty. *)
+  let create l = 
+    match l with
+    | [] -> raise VectorIllegal
+    | _ -> l
+
+  (* to_list.
+  - to_list takes a vector, and converts it to a list of scalar elements:
+    to_list /x0; ...; xi; ...; x(n-1)/ = [x0; ...; xi; ...; x(n-1)]. *)
+  let to_list v = 
+    v (* Because we are using list! *)
+
+  (* dimension.
+  - dim v returns the dimension of v: the number of scalar elements in v. *)
+  let dim v = 
+    List.length(v)
+
+  (* extraction.
+  - nth v n returns the n-th scalar element of v, where indexes begin at 0.
+  - VectorIllegal is raised if n is out of range. *)
+  let nth v n = 
+    (* nth function at https://ocaml.org/manual/5.4/api/List.html
+    Return the n-th element of the given list. The first element (head of the list) is at position 0.
+    Raises
+      Failure if the list is too short.
+      Invalid_argument if n is negative.
+    
+        We just need to raise VectorIllegal with Failure or Invalid_argument exception.*)
+    try List.nth v n
+    with _ -> raise VectorIllegal
+
+  (* vector addition.
+  - ++ is associative: x ++ (y ++ z) = (x ++ y) ++ z.
+  - ++ is commutative: x ++ y = y ++ x.
+  - VectorIllegal is raised if x and y have different dimensions. *)
+  let (++) v1 v2 = 
+    (* Let's apply SCALAR addition for each element of two lists.
+    I used map2 and compare_lengths function in module List.
+    compare_lengths is 0 if equal size, else 1 or -1 *)
+    if (List.compare_lengths v1 v2)=0
+      then List.map2 Scal.(++) v1 v2
+    else raise VectorIllegal
+
+  (* equality test.
+  - (x == y) = true iff x = y.
+  - VectorIllegal is raised if x and y have different dimensions. *)
+  let (==) v1 v2 = 
+    (* I used List.equal function but it cannot detect different lengths.
+    So I used compare_lengths first to assure it.*)
+    if (List.compare_lengths v1 v2)=0
+        then List.equal Scal.(==) v1 v2
+    else raise VectorIllegal
+
+  (* inner product.
+  - inner x y returns the inner product of x and y by using ++ and ** operations for type elem: inner /x0; ...; xn/ /y0; ...; yn/ = (x0 ** y0) ++ ... ++ (xn ** yn).
+  - VectorIllegal is raised if x and y have different dimensions. *)
+  let innerp v1 v2 = 
+    if (List.compare_lengths v1 v2)=0 then
+      let l = List.map2 Scal.( ** ) v1 v2 in (* [x0y0; x1y1; ...; xnyn] *)
+      List.fold_left Scal.(++) Scal.zero l (* 0+x0y0+...xnyn*)
+    else raise VectorIllegal
 end
 
 (* Problem 2-3 *)
