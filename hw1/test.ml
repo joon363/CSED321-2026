@@ -46,6 +46,9 @@ let _ =
   add_int_test "gcd 10 5" (fun () -> gcd 10 5) 5;
   add_int_test "gcd 14 21" (fun () -> gcd 14 21) 7;
   add_int_test "gcd 81 36" (fun () -> gcd 81 36) 9;
+  add_int_test "gcd 132 108" (fun () -> gcd 132 108) 12;
+  add_int_test "gcd 100 0" (fun () -> gcd 100 0) 100;
+  add_int_test "gcd 0 100" (fun () -> gcd 0 100) 100;
 
   (* 4. combi *)
   add_int_test "combi 5 0" (fun () -> combi 5 0) 1;

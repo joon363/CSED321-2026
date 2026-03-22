@@ -21,7 +21,9 @@ let rec gcd m n =
     for m>n, if m=nq+r then gcd m n = gcd n r*)
     else let rec inner a b = 
         (*Stop condition: reached r or r=0*)
-        if a <= b then a 
+        (*always a>b*)
+        if b=0 then a
+        else if (a-b) <= b then inner b (a-b)
         else inner (a-b) b in
     if m>n then inner m n else inner n m
         
