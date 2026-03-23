@@ -352,24 +352,54 @@ let solution_dl' =
 (* Problem 3-4 *)
 (* Maximum Weight Problem *)
 
-(* module Weight : SCALAR with type t = int
+module Weight : SCALAR with type t = int
 =
 struct
   type t = int
 
   exception ScalarIllegal
 
-  let zero = 999999              (* Dummy value : Rewrite it! *)
-  let one = 999999               (* Dummy value : Rewrite it! *)
+  let zero = 0
+  let one = -1
+  
+  (* 
+  In the formula, W(x,y) is ++ of W(x,z) ** W(z,y) 
+  To calculate the weight, '++' operation should do 'max' op.
+  - In case of (-1) ++ (value), it should return -1 because -1 is same as Infinity
+  - In case of 0 ++ (value), it should return value (and 'max' op does.)
+    - therefore, identity zero for '++' operation should be 0*)
+  let (++) w1 w2 = 
+    match w1, w2 with
+    | (-1), (-1) -> (-1)
+    | (-1), v -> (-1)
+    | v, (-1) -> (-1)
+    | _,_ -> if(w1<w2) then w2 else w1
+  
+  (* 
+  Also, '**' operation should do 'min' op because weight is limited to smaller one.
+  - In case of (-1) ** (value), it should return (value) because -1 is same as Infinity
+    - therefore, identity one for '**' operation should be -1
+  - In case of 0 ** (value), it should return 0. (and 'min' op does.)
+  *)
+  let ( ** ) w1 w2 = 
+    match w1, w2 with
+    | (-1), (-1) -> (-1)
+    | (-1), v -> v
+    | v, (-1) -> v
+    | _,_ -> if(w1<w2) then w1 else w2
 
-  let (++) _ _ = raise NotImplemented
-  let ( ** ) _ _ = raise NotImplemented
-  let (==) _ _ = raise NotImplemented
+  let (==) w1 w2 = (w1 = w2)
 end
 
 (* .. Write some code here .. *)
+module WMat = MatrixFn (Weight)
+module WMatClosure = ClosureFn (WMat)
 
-let weight _ = raise NotImplemented
+(* val distance : int list list -> int list list *)
+let weight wll = 
+  try
+    WMat.to_list (WMatClosure.closure (WMat.create wll))
+  with _ -> raise IllegalFormat
 
 let ml =
   [[-1; 0  ; 0  ; 0  ; 0  ; 0   ];
@@ -386,11 +416,10 @@ let solution_ml' =
    [0;  75; 25;  -1;  125; 40 ];
    [0;  75; 25;  -1;  -1;  40 ];
    [0;  0;  0;   0;   0;   -1 ]]
-*)
+
 let _ =
   try
-  (* if reach al = solution_al' && distance dl = solution_dl' && weight ml = solution_ml' then *)
-  if distance dl = solution_dl' then
+  if reach al = solution_al' && distance dl = solution_dl' && weight ml = solution_ml' then
     print_endline "\nYour program seems fine (but no guarantee)!"
   else
     print_endline "\nYour program might have bugs!"

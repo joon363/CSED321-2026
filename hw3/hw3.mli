@@ -32,6 +32,6 @@ val distance : int list list -> int list list
 val dl : int list list
 val solution_dl' : int list list
 
-(* val weight : int list list -> int list list
+val weight : int list list -> int list list
 val ml : int list list
-val solution_ml' : int list list *)
+val solution_ml' : int list list
