@@ -259,7 +259,11 @@ end
 module BoolMat = MatrixFn (Boolean)
 module BoolMatClosure = ClosureFn (BoolMat)
 
-(* let reach _ = raise NotImplemented
+(* val reach : bool list list -> bool list list *)
+let reach bll = 
+  try
+    BoolMat.to_list (BoolMatClosure.closure (BoolMat.create bll))
+  with _ -> raise IllegalFormat
 
 let al =
   [[true;  false; false; false; false; false];
@@ -280,7 +284,7 @@ let solution_al' =
 (* Problem 3-3 *)
 (* Shortest Distance Problem *)
 
-module Distance : SCALAR with type t = int
+(* module Distance : SCALAR with type t = int
 =
 struct
   type t = int
@@ -352,11 +356,12 @@ let solution_ml' =
    [0;  75; 25;  -1;  125; 40 ];
    [0;  75; 25;  -1;  -1;  40 ];
    [0;  0;  0;   0;   0;   -1 ]]
-
+*)
 let _ =
   try
-  if reach al = solution_al' && distance dl = solution_dl' && weight ml = solution_ml' then
+  (* if reach al = solution_al' && distance dl = solution_dl' && weight ml = solution_ml' then *)
+  if reach al = solution_al' then
     print_endline "\nYour program seems fine (but no guarantee)!"
   else
     print_endline "\nYour program might have bugs!"
-  with _ -> print_endline "\nYour program is not complete yet!" *)
+  with _ -> print_endline "\nYour program is not complete yet!"

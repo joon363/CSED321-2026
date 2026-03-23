@@ -24,11 +24,11 @@ module BoolMatClosure :
     val closure : BoolMat.t -> BoolMat.t
   end
 
-(* val reach : bool list list -> bool list list
+val reach : bool list list -> bool list list
 val al : bool list list
 val solution_al' : bool list list
 
-val distance : int list list -> int list list
+(* val distance : int list list -> int list list
 val dl : int list list
 val solution_dl' : int list list
 
