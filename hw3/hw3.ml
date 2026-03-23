@@ -120,21 +120,119 @@ end
 module MatrixFn (Scal : SCALAR) : MATRIX with type elem = Scal.t
 =
 struct
+  module Vec = VectorFn(Scal)
+
   type elem = Scal.t
-  type t = unit
+  type t = Vec.t list (* Vector List. *)
 
   exception MatrixIllegal
+  (* matrix creation.
+  - create takes a list of elem lists, and returns a corresponding matrix.
+  - The list of elem lists is given in increasing order of matrix rows,
+  and each elem list is given in increasing order of matrix columns.
+  - Therefore, each elem list must have the same size as the list of elem lists.
+  - MatrixIllegal is raised if each elem list has a different size or the input
+  list is empty. *)
+  let create ll = 
+    match ll with
+    | [] -> raise MatrixIllegal
+    | _ -> 
+      let d = List.length(ll) in
+      List.map (
+        fun row -> 
+          (* Make VectorFn for each row list. *)
+          if (List.length row = d) then (Vec.create row)
+          else raise MatrixIllegal
+      ) ll
 
-  let create _ = raise NotImplemented
-  let identity _ = raise NotImplemented
-  let to_list _ = raise NotImplemented
-  let dim _ = raise NotImplemented
-  let transpose _ = raise NotImplemented
-  let get _ _ _ = raise NotImplemented
+  (* identity.
+  - identity takes a dimension, and returns the identity matrix which has
+  the given dimension.
+  - MatrixIllegal is raised if dimension <= 0. *)
+  let identity d = 
+    if d<=0 then raise MatrixIllegal
+    (* init len f is [f 0; f 1; ...; f (len-1)], evaluated left to right. *)
+    else List.init d (
+      fun rowindex -> Vec.create (
+        (* 0 0 ... 0 1 0 ... 0 *)
+        List.init d (fun colindex -> 
+          if colindex = rowindex then Scal.one else Scal.zero
+        )
+      )
+    ) 
 
-  let (++) _ _ = raise NotImplemented
-  let ( ** ) _ _ = raise NotImplemented
-  let (==) _ _ = raise NotImplemented
+  (* to_list.
+  - to_list takes a matrix, and returns a corresponding list. *)
+  let to_list m = 
+    (* Make each row vector to list. that's all!*)
+    List.map (fun row -> Vec.to_list row) m
+
+  (* dimension.
+  - dim m returns the dimension of m: the number of rows or columns in m. *)
+  let dim m = 
+    List.length (m) (* We assume numbers of rows and cols are same.*)
+
+  (* transpose.
+  - transpose m returns the transpose matrix of m. *)
+  let transpose m = 
+    let d = (dim m) in
+    List.init d (
+      (* transposed matrix's (row, col) is (col, row) in original m.*)
+      fun rowindex -> Vec.create (
+        List.init d (fun colindex -> 
+          (* (col, row) in original m 
+          Note that row is elem list, col is VectorFn *)
+          Vec.nth (List.nth m colindex) rowindex
+        )
+      )
+    )
+
+
+  (* extraction.
+  - get m r c returns the content of m at row r and column c, where indexes begin at 0.
+  - MatrixIllegal is raised if either r or c is out of range. *)
+  let get m r c =
+    try 
+      let row = List.nth m r in
+      Vec.nth row c
+    (* Failure, Invalid_argument, VectorIllegal goes to MatrixIllegal. *)
+    with _ -> raise MatrixIllegal 
+
+  (* matrix addition.
+  - MatrixIllegal is raised if two matrices have different dimensions. *)
+  let (++) m1 m2 = 
+    if (List.compare_lengths m1 m2)=0 then 
+      List.map2 (
+        (* Use Vec.(++) from Problem 2-2 *)
+        fun row1 row2 ->
+          Vec.(++) row1 row2
+      ) m1 m2
+    else raise MatrixIllegal
+
+  (* matrix multiplication.
+  - MatrixIllegal is raised if two matrices have different dimensions. *)
+  let ( ** ) m1 m2 = 
+    let d = (dim m1) in
+    let d2 = (dim m2) in
+    if d=d2 then
+      List.init d (
+        (* New matrix's (r, c) is inner product of row r in m1, col c in m2.*)
+        fun rowindex -> Vec.create (
+          List.init d (fun colindex -> 
+            let row_r_in_m1 = List.nth m1 rowindex in
+            let col_c_in_m2 = List.nth (transpose m2) colindex in
+            Vec.innerp row_r_in_m1 col_c_in_m2
+          )
+        )
+      )      
+    else raise MatrixIllegal
+
+  (* equality test.
+  - MatrixIllegal is raised if two matrices have different dimensions. *)
+  let (==) m1 m2 = 
+    if (List.compare_lengths m1 m2)=0 then 
+      List.equal Vec.(==) m1 m2
+    else raise MatrixIllegal
 end
 
 (* Problem 3-1 *)
