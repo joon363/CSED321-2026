@@ -284,24 +284,54 @@ let solution_al' =
 (* Problem 3-3 *)
 (* Shortest Distance Problem *)
 
-(* module Distance : SCALAR with type t = int
+module Distance : SCALAR with type t = int
 =
 struct
   type t = int
 
   exception ScalarIllegal
 
-  let zero = 999999              (* Dummy value : Rewrite it! *)
-  let one = 999999               (* Dummy value : Rewrite it! *)
+  (* Since Identity should be like this: 
+   0 -1  -1
+  -1  0  -1 
+  -1  0  -1
+  "zero" should be -1, and "one" should be 0
+  *)
+  let zero = -1
+  let one = 0 
 
-  let (++) _ _ = raise NotImplemented
-  let ( ** ) _ _ = raise NotImplemented
-  let (==) _ _ = raise NotImplemented
+  (* In the formula, E(x,y) is ++ of E(x,z) ** E(z,y) 
+  To calculate the shortest path, '++' operation should do 'min' op.
+  - In case of (-1) ++ (value), it should return (value) because there EXISTS path somewhere.
+  
+  Also, '**' operation should do 'add' op because it is sum of two paths.
+  - In case of (-1) ** (value), it should return (-1) because there is NO PATH among E(x,z) - E(z,y)
+  *)
+  let (++) d1 d2 = 
+    match d1, d2 with
+    | (-1), (-1) -> (-1)
+    | (-1), v -> v
+    | v, (-1) -> v
+    | _,_ -> if(d1<d2) then d1 else d2
+
+  let ( ** ) d1 d2 = 
+    match d1, d2 with
+    | (-1), (-1) -> (-1)
+    | (-1), v -> (-1)
+    | v, (-1) -> (-1)
+    | _,_ -> d1+d2
+  let (==) d1 d2 = (d1 = d2)
 end
 
 (* .. Write some code here .. *)
+module DistMat = MatrixFn (Distance)
+module DistMatClosure = ClosureFn (DistMat)
 
-let distance _ = raise NotImplemented
+(* val distance : int list list -> int list list *)
+let distance dll = 
+  try
+    DistMat.to_list (DistMatClosure.closure (DistMat.create dll))
+  with _ -> raise IllegalFormat
 
 let dl =
   [[  0;  -1;  -1;  -1;  -1;  -1 ];
@@ -322,7 +352,7 @@ let solution_dl' =
 (* Problem 3-4 *)
 (* Maximum Weight Problem *)
 
-module Weight : SCALAR with type t = int
+(* module Weight : SCALAR with type t = int
 =
 struct
   type t = int
@@ -360,7 +390,7 @@ let solution_ml' =
 let _ =
   try
   (* if reach al = solution_al' && distance dl = solution_dl' && weight ml = solution_ml' then *)
-  if reach al = solution_al' then
+  if distance dl = solution_dl' then
     print_endline "\nYour program seems fine (but no guarantee)!"
   else
     print_endline "\nYour program might have bugs!"
