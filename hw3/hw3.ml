@@ -291,21 +291,18 @@ struct
 
   exception ScalarIllegal
 
-  (* Since Identity should be like this: 
-   0 -1  -1
-  -1  0  -1 
-  -1  0  -1
-  "zero" should be -1, and "one" should be 0
-  *)
   let zero = -1
   let one = 0 
 
   (* In the formula, E(x,y) is ++ of E(x,z) ** E(z,y) 
   To calculate the shortest path, '++' operation should do 'min' op.
   - In case of (-1) ++ (value), it should return (value) because there EXISTS path somewhere.
+    - therefore, identity zero for '++' should be -1!
   
   Also, '**' operation should do 'add' op because it is sum of two paths.
   - In case of (-1) ** (value), it should return (-1) because there is NO PATH among E(x,z) - E(z,y)
+  - In case of 0 ** (value), it should return (value) because 0 means there is path with distance 0 (such as city A to city A)
+    - therefore, identity one for '**' should be 0!
   *)
   let (++) d1 d2 = 
     match d1, d2 with
