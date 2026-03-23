@@ -89,10 +89,10 @@ let _ =
   add_custom_test "Matrix ** diff dim" (fun () -> 
     try let _ = IntMat.(create [[1]] ** create [[1; 2]; [3; 4]]) in false with IntMat.MatrixIllegal -> true | _ -> false);
   add_bool_test "Matrix ==" (fun () -> IntMat.(create [[1; 2]; [3; 4]] == create [[1; 2]; [3; 4]])) true;
-  add_bool_test "Matrix == false" (fun () -> IntMat.(create [[1; 2]; [3; 4]] == create [[4; 3]; [2; 1]])) false
+  add_bool_test "Matrix == false" (fun () -> IntMat.(create [[1; 2]; [3; 4]] == create [[4; 3]; [2; 1]])) false;
 
   (* 4. ClosureFn Module Tests *)
-  (* add_custom_test "Closure calculation 1" (fun () -> 
+  add_custom_test "Closure calculation 1" (fun () -> 
     let m = BoolMat.create [[false; true]; [false; false]] in
     let expected = BoolMat.create [[true; true]; [false; true]] in
     BoolMat.(BoolMatClosure.closure m == expected)
@@ -100,10 +100,10 @@ let _ =
   add_custom_test "Closure calculation 2 (Identity)" (fun () -> 
     let m = BoolMat.identity 2 in
     BoolMat.(BoolMatClosure.closure m == m)
-  );
+  )
 
   (* 5. Reachability Problem Tests *)
-  add_bool_list_list_test "reach normal (al)" (fun () -> reach al) solution_al';
+  (* add_bool_list_list_test "reach normal (al)" (fun () -> reach al) solution_al';
   add_custom_test "reach IllegalFormat empty" (fun () -> 
     try let _ = reach [] in false with IllegalFormat -> true | _ -> false);
   add_custom_test "reach IllegalFormat non-square" (fun () -> 

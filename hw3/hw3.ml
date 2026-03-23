@@ -244,7 +244,13 @@ sig
 end
 =
 struct
-  let closure _ = raise NotImplemented
+  let closure m =
+    let d = Mat.dim m in 
+    let rec closure_rec current_closure =
+      let new_closure = Mat.(++) (Mat.identity d) (Mat.( ** ) m current_closure) in
+      if Mat.(==) current_closure new_closure then current_closure
+      else closure_rec new_closure
+    in closure_rec (Mat.identity d) 
 end
 
 (* Problem 3-2 *)
@@ -253,7 +259,7 @@ end
 module BoolMat = MatrixFn (Boolean)
 module BoolMatClosure = ClosureFn (BoolMat)
 
-let reach _ = raise NotImplemented
+(* let reach _ = raise NotImplemented
 
 let al =
   [[true;  false; false; false; false; false];
@@ -353,4 +359,4 @@ let _ =
     print_endline "\nYour program seems fine (but no guarantee)!"
   else
     print_endline "\nYour program might have bugs!"
-  with _ -> print_endline "\nYour program is not complete yet!"
+  with _ -> print_endline "\nYour program is not complete yet!" *)

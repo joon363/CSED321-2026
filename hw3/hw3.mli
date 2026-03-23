@@ -12,7 +12,7 @@ module VectorFn (Scal : SCALAR) : VECTOR with type elem = Scal.t
 
 module MatrixFn (Scal : SCALAR) : MATRIX with type elem = Scal.t
 
-(* module ClosureFn (Mat : MATRIX) :
+module ClosureFn (Mat : MATRIX) :
   sig
     val closure : Mat.t -> Mat.t
   end
@@ -24,7 +24,7 @@ module BoolMatClosure :
     val closure : BoolMat.t -> BoolMat.t
   end
 
-val reach : bool list list -> bool list list
+(* val reach : bool list list -> bool list list
 val al : bool list list
 val solution_al' : bool list list
 
