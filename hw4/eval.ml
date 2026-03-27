@@ -4,7 +4,8 @@
 
 exception NotImplemented
 exception Stuck
-
+open Uml
+(* open Inout for debugging*)
 let freshVarCounter = ref 0
 
 (*
@@ -15,6 +16,31 @@ let getFreshVariable s =
   let _ = freshVarCounter := !freshVarCounter + 1
   in
   s ^ "__" ^ (string_of_int (!freshVarCounter))
+
+(* 
+ * Substitution [e'/x]exp
+ * Follows the rules at 49p of our textbook
+*)
+let rec substitute e' x exp =  (*lam x.x  t  lamf.t*)
+  match exp with
+  | Var (y) ->
+  (* Rule 1: [e/x]x=e *)
+    if x=y then e'
+
+  (* Rule 2: [e/x]y=y *)
+    else Var (y)
+
+  (* Rule 3: [e/x](e1, e2)=[e/x]e1 [e/x]e2 *)
+  | App (e1, e2) -> App ((substitute e' x e1), (substitute e' x e2))
+
+  | Lam (y, e) -> 
+    (* Rule 4: [e'/x]λx.e=λx.e *)
+    if (x=y) then Lam (x, e)
+    (* Rule 5: [e'/x]λy.e=λy.[e'/x]e if x!=y, y !in FV(e')*)
+    (* Rule 6: [e'/x]λy.e=λz.[e'.x][y<->z]e 
+    * if x!=y, y in FV(e'), z!=y, z !in FV(e), z!=x, z !in FV(e') *)
+    else raise NotImplemented
+
 
 (*
  * implement a single step with reduction using the call-by-value strategy.
