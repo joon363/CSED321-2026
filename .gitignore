@@ -37,3 +37,12 @@ _opam/
 
 # test binary
 **/test_runner
+
+# binaries
+hw1/hw1
+hw2/hw2
+hw3/hw3
+hw4/hw4
+hw4/lexer.ml
+hw4/parser.ml
+hw4/parser.mli
