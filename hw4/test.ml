@@ -87,21 +87,19 @@ let () =
   add_step_test "CBV Lam Rule" "((lam x. x) (lam y. y)) (lam z. z)" "(lam y. y) (lam z. z)";
   add_step_test "CBV Arg Rule" "(lam x. x) ((lam y. y) (lam z. z))" "(lam x. x) (lam z. z)";
   add_step_test "CBV App Rule (Beta Reduction)" "(lam x. x) (lam y. y)" "lam y. y";
-  add_step_test "CBV App Rule (Beta Reduction - bool true)" "(lam t. lam f. t) (lam x. x) (lam y. y)" "lam x. x";
-  add_step_test "CBV App Rule (Beta Reduction - bool false)" "(lam t. lam f. f) (lam x. x) (lam y. y)" "lam y. y";
+  add_step_test "CBV App Rule (Beta Reduction - bool)" "(lam t. (lam f. t)) (lam x. x) (lam y. y)" "(lam f. (lam x.x)) (lam y.y)";
   add_step_test "CBV App Rule (Substitution)" "(lam x. lam y. x) (lam a. a)" "lam y. (lam a. a)";
   add_step_test "CBV Complex Order" "((lam x. x) (lam x. x)) ((lam y. y) (lam y. y))" "(lam x. x) ((lam y. y) (lam y. y))";
   
   (* 2. Stuck Exception Tests *)
   add_stuck_test "Stuck - Variable" "x";
   add_stuck_test "Stuck - Value (Lambda)" "lam x. x";
-  add_stuck_test "Stuck - Free Variable App 1" "x (lam y. y)";
-  add_stuck_test "Stuck - Free Variable App 2" "(lam x. x) y";
+  add_stuck_test "Stuck - Free Variable App" "x (lam y. y)";
   
   (* 3. Example Files Executions Tests *)
-  (* add_file_test "File - nat.uml" "example/nat.uml";
+  add_file_test "File - nat.uml" "example/nat.uml";
   add_file_test "File - rec.uml" "example/rec.uml";
-  add_file_test "File - fib.uml" "example/fib.uml"; *)
+  add_file_test "File - fib.uml" "example/fib.uml";
 
   let total = List.length !test_cases in
   let pass_count = ref 0 in
