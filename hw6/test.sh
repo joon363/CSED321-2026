@@ -22,10 +22,10 @@ echo "빌드가 완료되었습니다. 테스트를 실행합니다."
 # ---------------------------------------------------------
 
 # --- 문제 1 (De Bruijn Indexes) 테스트 ---
-ocamlc -thread -I . -o test1_runner lib.cma test1.ml && ./test1_runner
+ocamlc -thread -I . -o test_runner lib.cma test1.ml && ./test_runner
 
 # --- 문제 2 (Call-By-Value) 테스트 ---
-# ocamlc -thread -I . -o test2_runner lib.cma test2.ml && ./test2_runner
+# ocamlc -thread -I . -o test_runner lib.cma test2.ml && ./test_runner
 
 # --- 문제 3 (Abstract Machine N) 테스트 ---
-# ocamlc -thread -I . -o test3_runner lib.cma test3.ml && ./test3_runner
+# ocamlc -thread -I . -o test_runner lib.cma test3.ml && ./test_runner
