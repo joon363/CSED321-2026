@@ -44,6 +44,7 @@ hw2/hw2
 hw3/hw3
 hw4/hw4
 hw5/hw5
+hw6/hw6
 */lexer.ml
 */parser.ml
 */parser.mli

@@ -78,6 +78,10 @@ let run_file_test name filepath =
 
 let () =
   (* 1. Call-By-Value Rules Tests *)
+  add_step_test "Subst Failed 1" "((lam x. y) x)" "y";
+  add_step_test "Subst Failed 2" "((lam x. x) x)" "x";
+  add_step_test "Subst Failed 3" "(((lam x. x)(lam x. y)) x)" "(((lam x.y) x))";
+  add_step_test "Subst Failed 3-1" "(((lam x.y) x))" "y";
   add_step_test "Subst Var Hit" "((lam x. x) (lam y. y))" "(lam y. y)";
   add_step_test "Subst Var Miss" "((lam x. z) (lam y. y))" "z";
   add_step_test "Subst App" "((lam x. (x x)) (lam y. y))" "((lam y. y) (lam y. y))";
@@ -95,6 +99,7 @@ let () =
   add_stuck_test "Stuck - Variable" "x";
   add_stuck_test "Stuck - Value (Lambda)" "lam x. x";
   add_stuck_test "Stuck - Free Variable App" "x (lam y. y)";
+  add_stuck_test "Stuck - App" "((lam x.x) y) x";
   
   (* 3. Example Files Executions Tests *)
   add_file_test "File - nat.uml" "example/nat.uml";
