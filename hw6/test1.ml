@@ -8,7 +8,7 @@ let parse_str s =
 type test_case = string * string * Tml.exp
 
 let test_cases = [
-  (* Variable / Lambda / Application *)
+  (* Lambda / Application *)
   ("Basic Lam",
    "fn x:int => x",
    Lam (Ind 0));
@@ -45,20 +45,20 @@ let test_cases = [
 
   (* Unit *)
   ("Unit",
-   "unit",
+   "()",
    Eunit);
 
-  (* Sum types *)
+  (* Sum types: parser syntax = inl term (tp) / inr term (tp)*)
   ("Inl",
-   "inl 3 as int+bool",
+   "inl (int) 3",
    Inl (Num 3));
 
   ("Inr",
-   "inr false as int+bool",
+   "inr (bool) false",
    Inr False);
 
   ("Case Inl",
-   "case inl 3 as int+bool of inl x => x | inr y => 0",
+   "case inl (int) 3 of inl x => x | inr y => 0",
    Case (
      Inl (Num 3),
      Lam (Ind 0),
@@ -66,7 +66,7 @@ let test_cases = [
    ));
 
   ("Case Inr",
-   "case inr false as int+bool of inl x => 1 | inr y => y",
+   "case inr (bool) false of inl x => 1 | inr y => y",
    Case (
      Inr False,
      Lam (Num 1),
@@ -75,7 +75,7 @@ let test_cases = [
 
   (* Fix *)
   ("Fix Identity",
-   "fix f:int->int => fn x:int => x",
+   "fix f:int => fn x:int => x",
    Fix (Lam (Ind 0)));
 
   (* Boolean *)
@@ -87,6 +87,7 @@ let test_cases = [
    "false",
    False);
 
+  (* Conditional *)
   ("If-then-else",
    "if a then b else c a",
    Ifthenelse (
@@ -108,22 +109,22 @@ let test_cases = [
    "42",
    Num 42);
 
-  (* Arithmetic *)
+  (* Arithmetic operators are terms *)
   ("Plus",
-   "+ (1, 2)",
+   "+ 1 2",
    App (App (Plus, Num 1), Num 2));
 
   ("Minus",
-   "- (5, 3)",
+   "- 5 3",
    App (App (Minus, Num 5), Num 3));
 
   ("Eq True",
-   "= (4, 4)",
+   "= 4 4",
    App (App (Eq, Num 4), Num 4));
 
   ("Eq False",
-   "= (4, 5)",
-   App (App (Eq, Num 4), Num 5))
+   "= 4 5",
+   App (App (Eq, Num 4), Num 5));
 ]
 
 let run_test (name, input, expected) =

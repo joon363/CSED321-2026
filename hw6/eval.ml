@@ -1,5 +1,9 @@
 open Tml
 exception NotImplemented
+exception NotImplemented1
+exception NotImplemented2
+exception NotImplemented3
+exception NotImplemented4
 exception Stuck
 exception NotConvertible
 
@@ -30,7 +34,61 @@ let value2exp _ = raise NotImplemented
 
 (* Problem 1.
  * texp2exp : Tml.texp -> Tml.exp *)
-let texp2exp _ = raise NotImplemented
+let rec texp2exp exp =
+  match exp with
+  | Tvar v ->
+      raise NotImplemented4
+
+  | Tlam (v, tp, e) ->
+      raise NotImplemented3
+
+  | Tapp (e1, e2) ->
+      App (texp2exp e1, texp2exp e2)
+
+  | Tpair (e1, e2) ->
+      Pair (texp2exp e1, texp2exp e2)
+
+  | Tfst e ->
+      Fst (texp2exp e)
+
+  | Tsnd e ->
+      Snd (texp2exp e)
+
+  | Teunit ->
+      Eunit
+
+  | Tinl (e, _) ->
+      Inl (texp2exp e)
+
+  | Tinr (e, _) ->
+      Inr (texp2exp e)
+
+  | Tcase (e, x1, e1, x2, e2) ->
+      raise NotImplemented1
+
+  | Tfix (x, _, e) ->
+      raise NotImplemented2
+
+  | Ttrue ->
+      True
+
+  | Tfalse ->
+      False
+
+  | Tifthenelse (e1, e2, e3) ->
+      Ifthenelse (texp2exp e1, texp2exp e2, texp2exp e3)
+
+  | Tnum n ->
+      Num n
+
+  | Tplus ->
+      Plus
+
+  | Tminus ->
+      Minus
+
+  | Teq ->
+      Eq
 
 (* Problem 2.
  * step1 : Tml.exp -> Tml.exp *)
